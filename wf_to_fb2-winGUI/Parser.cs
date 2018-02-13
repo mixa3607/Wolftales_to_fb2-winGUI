@@ -86,7 +86,7 @@ namespace wf_to_fb2
             string bookname = html.QuerySelector(".post-title").TextContent;
             return bookname;
         }
-        public static XDocument MakeFB2Sample(string FName, string LName, string BookName, DateTime Time)
+        public static XDocument MakeFB2Sample(string FName, string LName, string BookName, DateTime Time, string CoverImgB64)
         {
             XNamespace xmlns = "http://www.gribuser.ru/xml/fictionbook/2.0";
             XDocument fb2 = new XDocument();
@@ -112,10 +112,16 @@ namespace wf_to_fb2
             XElement fictionBook = new XElement(xmlns + "FictionBook",
                                        new XAttribute("xmlns", xmlns.NamespaceName),
                                        new XAttribute(XNamespace.Xmlns + "l", "http://www.w3.org/1999/xlink"),
-                                       new XAttribute(XNamespace.Xmlns + "xlink", "http://www.w3.org/1999/xlink"),
+                                       //new XAttribute(XNamespace.Xmlns + "xlink", "http://www.w3.org/1999/xlink"),
                                        description,
                                        new XElement("body", new XElement("title", new XElement("p", BookName)))
                                    );
+            if (CoverImgB64 != null)
+            {
+                XNamespace l = "http://www.w3.org/1999/xlink";
+                titleInfo.Add(new XElement("coverpage", new XElement("image", new XAttribute(l + "href", "#cover.jpg"))));
+                fictionBook.Add(new XElement("binary", new XAttribute("id", "cover.jpg"), new XAttribute("content-type", "image/jpeg"), CoverImgB64));
+            }
             fb2.Add(fictionBook);
 
             return fb2;

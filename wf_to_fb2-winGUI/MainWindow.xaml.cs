@@ -18,8 +18,11 @@ namespace wf_to_fb2
     /// 
     public struct Novel
     {
-        public string Name { get; set; }
+        public string BookName { get; set; }
         public string Url { get; set; }
+        public string AuthorFName { get; set; }
+        public string AuthorLName { get; set; }
+        public string CoverImgB64 { get; set; }
     }
     public partial class MainWindow : MetroWindow
     {
@@ -30,6 +33,7 @@ namespace wf_to_fb2
         private BackgroundWorker GetParseBook, ParseSelected;
         private string CurrentBook;
         private Novel[] Novels;
+        private int Method;
         public MainWindow()
         {
             InitializeComponent();
@@ -49,23 +53,35 @@ namespace wf_to_fb2
                 {
                     new Novel
                     {
-                        Name = "Stellar Transformations",
-                        Url = "http://wolftales.ru/stellar-transformations"
+                        BookName = "Stellar Transformations",
+                        Url = "http://wolftales.ru/stellar-transformations",
+                        AuthorFName = "IET",
+                        AuthorLName = "I Eat Tomatoes",
+                        CoverImgB64 = null
                     },
                     new Novel
                     {
-                        Name = "USAW",
-                        Url = "http://wolftales.ru/usaw"
+                        BookName = "USAW",
+                        Url = "http://wolftales.ru/usaw",
+                        AuthorFName = "ESC",
+                        AuthorLName = "Endless Sea of Clouds",
+                        CoverImgB64 = null
                     },
                     new Novel
                     {
-                        Name = "Gam3",
-                        Url = "http://wolftales.ru/gam3"
+                        BookName = "Gam3",
+                        Url = "http://wolftales.ru/gam3",
+                        AuthorFName = "Cosimo",
+                        AuthorLName = "Yap",
+                        CoverImgB64 = null
                     },
                     new Novel
                     {
-                        Name = "Lazy Dungeon Master (droped)",
-                        Url = "http://wolftales.ru/ldm"
+                        BookName = "Lazy Dungeon Master (droped)",
+                        Url = "http://wolftales.ru/ldm",
+                        AuthorFName = "Onikage",
+                        AuthorLName = "Spanner",
+                        CoverImgB64 = null
                     }
                 };
             }
@@ -107,6 +123,7 @@ namespace wf_to_fb2
         private void ParseChapters_Click(object sender, RoutedEventArgs e)
         {
             ProgressOfParsing.Value = 0;
+            ChaptersContainer.IsEnabled = false;
             ParseSelected.RunWorkerAsync(new object[] { ChaptersTree.ItemsSource as ObservableCollection<Vol>, CurrentBook});
         }
 
@@ -120,17 +137,19 @@ namespace wf_to_fb2
             {
                 var xml = (e.Result as object[])[0] as XDocument;
                 var name = (e.Result as object[])[1] as string;
-                for (int i = 1; File.Exists(name + ".fb2"); i++)
+                string offset = "";
+                for (int i = 1; File.Exists(name + offset + ".fb2"); i++)
                 {
-                    name += " (" + i + ")";
+                    offset = " (" + i + ")";
                 }
-                xml.Save(name + ".fb2");
-                MessageBox.Show(this, "Complete. Book name is " + name + ".fb2", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                xml.Save(name + offset + ".fb2");
+                MessageBox.Show(this, "Complete. Book name is " + name + offset + ".fb2", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch
             {
                 MessageBox.Show(this, "Saving error", "error", MessageBoxButton.OK, MessageBoxImage.Hand);
             }
+            ChaptersContainer.IsEnabled = true;
             
         }
 
@@ -156,12 +175,25 @@ namespace wf_to_fb2
             var bw = sender as BackgroundWorker;
             int progress = 0;
 
+            string CoverImgB64 = null;
+            string FName = "translated by";
+            string LName = "Wolftales";
+
             bw.ReportProgress(progress);
+            if (Method == 1)
+            {
+                
+                Dispatcher.Invoke(delegate () {
+                    CoverImgB64 = ((Novel)ListNovels.SelectedItem).CoverImgB64;
+                    FName = ((Novel)ListNovels.SelectedItem).AuthorFName;
+                    LName = ((Novel)ListNovels.SelectedItem).AuthorLName;
+                });
+            }
+            
             string BookName = Parser.Get_BookName(Parser.Get_Page(index));
-            string FName = "Wolf";
-            string LName = "Tales";
+            
             DateTime time = DateTime.Now;
-            var scelet = Parser.MakeFB2Sample(FName, LName, BookName, time);
+            var scelet = Parser.MakeFB2Sample(FName, LName, BookName, time, CoverImgB64);
 
 
             var vols_xml = new List<XElement>();
@@ -234,9 +266,11 @@ namespace wf_to_fb2
             if (ByName.IsChecked == true)
             {
                 CurrentBook = ((Novel)ListNovels.SelectedItem).Url;
+                Method = 1;
             }
             else if (ByLink.IsChecked == true)
             {
+                Method = 2;
                 CurrentBook = LinkBookBox.Text;
             }
             else

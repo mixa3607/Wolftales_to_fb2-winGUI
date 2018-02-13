@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:WpfApp4"
         mc:Ignorable="d"
         Title="NOVEL TO FB2 FOR WOLFTALES.RU" Height="400" Width="900"
-                      MinHeight="400" MinWidth="900"
+                      MinHeight="400" MinWidth="600"
         GlowBrush="{DynamicResource AccentColorBrush}"
         ResizeMode="CanResizeWithGrip"
 
@@ -65,45 +65,10 @@
                         </ListView.Style>
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Path=Name}"/>
+                                <TextBlock Text="{Binding Path=BookName}"/>
                             </DataTemplate>
                         </ListView.ItemTemplate>
-                        <!--<ListViewItem IsSelected="True" Content="Stellar Transformations" Height="1"/>
-                        <ListViewItem IsSelected="False" Content="USAW" Height="5"/>
-                        <ListViewItem IsSelected="False" Content="Gam3" MaxHeight="15"/>
-                        <ListViewItem IsSelected="False" Content="Lazy Dungeon Master (droped)"/>-->
                     </ListView>
-                    <!--<StackPanel Grid.Column="1" Grid.Row="1">
-                        <StackPanel.Style>
-                            <Style TargetType="StackPanel">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsChecked, ElementName=ByName}" Value="False" >
-                                        <Setter Property="IsEnabled" Value="False"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </StackPanel.Style>
-                        <RadioButton IsChecked="True" Name="Novel_StellsrT" Content="Stellar Transformations" GroupName="Novels" Margin="0 2 0 2" >
-                            <RadioButton.LayoutTransform>
-                                <ScaleTransform ScaleX="0.95" ScaleY="0.95" />
-                            </RadioButton.LayoutTransform>
-                        </RadioButton>
-                        <RadioButton Name="Novel_Usaw" Content="USAW" GroupName="Novels" Margin="0 2 0 2">
-                        <RadioButton.LayoutTransform>
-                            <ScaleTransform ScaleX="0.95" ScaleY="0.95" />
-                        </RadioButton.LayoutTransform>
-                        </RadioButton>
-                        <RadioButton Name="Novel_Game" Content="Gam3" GroupName="Novels" Margin="0 2 0 2">
-                            <RadioButton.LayoutTransform>
-                                <ScaleTransform ScaleX="0.95" ScaleY="0.95" />
-                            </RadioButton.LayoutTransform>
-                        </RadioButton>
-                        <RadioButton Name="Novel_Ldm" Content="Lazy Dungeon Master (droped)" GroupName="Novels" Margin="0 2 0 2">
-                            <RadioButton.LayoutTransform>
-                                <ScaleTransform ScaleX="0.95" ScaleY="0.95" />
-                            </RadioButton.LayoutTransform>
-                        </RadioButton>
-                    </StackPanel>-->
                     <Line Margin="0 2 0 4" Grid.Row="2" Grid.ColumnSpan="3" X1="0" Y1="0" X2="1"  Y2="0" Stroke="LightSkyBlue" StrokeThickness="5" Stretch="Uniform" StrokeEndLineCap="Round" StrokeStartLineCap="Round"/>
                     <RadioButton Name="ByLink" Content="Get novel by link" GroupName="Methods" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="3"/>
                     <Grid Grid.Column="1" Grid.Row="4">
@@ -145,19 +110,24 @@
             <Grid VerticalAlignment="Stretch">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
-                    <RowDefinition Height="25"/>
-                    <RowDefinition Height="10"/>
-                    <RowDefinition Height="30"/>
-                    <RowDefinition Height="2"/>
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-                <TreeView Name="ChaptersTree"
+                <Grid Name="ChaptersContainer" Grid.Row="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="2"/>
+                    </Grid.RowDefinitions>
+
+                    <TreeView Name="ChaptersTree"
                   VerticalAlignment="Stretch" 
                   HorizontalAlignment="Stretch" Grid.Row="0" >
-                    <TreeView.ItemTemplate>
-                        <HierarchicalDataTemplate ItemsSource="{Binding Path=Chapters}">
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                                <CheckBox IsChecked="{Binding Checked}" 
+                        <TreeView.ItemTemplate>
+                            <HierarchicalDataTemplate ItemsSource="{Binding Path=Chapters}">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                                    <CheckBox IsChecked="{Binding Checked}" 
                                   IsThreeState="{Binding ThreeState}" 
                                   VerticalAlignment="Stretch" 
                                   HorizontalAlignment="Stretch" 
@@ -165,12 +135,12 @@
                                   VerticalContentAlignment="Stretch"
                                   Checked="Vol_Checked"
                                   Unchecked="Vol_Unchecked">
-                                </CheckBox>
-                                <TextBlock Text="{Binding Text}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="4 0 0 0"/>
-                            </StackPanel>
-                            <HierarchicalDataTemplate.ItemTemplate>
-                                <DataTemplate >
-                                    <CheckBox IsChecked="{Binding Checked}"
+                                    </CheckBox>
+                                    <TextBlock Text="{Binding Text}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="4 0 0 0"/>
+                                </StackPanel>
+                                <HierarchicalDataTemplate.ItemTemplate>
+                                    <DataTemplate >
+                                        <CheckBox IsChecked="{Binding Checked}"
                                       VerticalAlignment="Stretch" 
                                       HorizontalAlignment="Stretch" 
                                       HorizontalContentAlignment="Stretch" 
@@ -178,25 +148,26 @@
                                       Content="{Binding Text}"
                                       Checked="Ch_Checked"
                                       Unchecked="Ch_Unchecked">
-                                    </CheckBox>
-                                </DataTemplate>
-                            </HierarchicalDataTemplate.ItemTemplate>
-                        </HierarchicalDataTemplate>
-                    </TreeView.ItemTemplate>
-                </TreeView>
-                <Grid Grid.Row="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition Width="3"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <Button Name="SelectAll" Content="Select All" Grid.Column="0"/>
-                    <Button Name="DeselectAll" Content="Deselect All" Grid.Column="2"/>
+                                        </CheckBox>
+                                    </DataTemplate>
+                                </HierarchicalDataTemplate.ItemTemplate>
+                            </HierarchicalDataTemplate>
+                        </TreeView.ItemTemplate>
+                    </TreeView>
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="3"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Button Name="SelectAll" Content="Select All" Grid.Column="0"/>
+                        <Button Name="DeselectAll" Content="Deselect All" Grid.Column="2"/>
+                    </Grid>
+                    <Line Grid.Row="2" X1="0" Y1="0" X2="1"  Y2="0" Stroke="LightSkyBlue" StrokeThickness="5" Stretch="Uniform" StrokeEndLineCap="Round" StrokeStartLineCap="Round"></Line>
+                    <!--<Line Margin="0" HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Row="2" Stroke="Red" StrokeThickness="6"  Y1="0" Y2="0" StrokeEndLineCap="Round" StrokeStartLineCap="Round"/>-->
+                    <Button Focusable="false" Name="ParseChapters" Content="Parse and save fb2" Grid.Row="3"/>
                 </Grid>
-                <Line Grid.Row="2" X1="0" Y1="0" X2="1"  Y2="0" Stroke="LightSkyBlue" StrokeThickness="5" Stretch="Uniform" StrokeEndLineCap="Round" StrokeStartLineCap="Round"></Line>
-                <!--<Line Margin="0" HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Row="2" Stroke="Red" StrokeThickness="6"  Y1="0" Y2="0" StrokeEndLineCap="Round" StrokeStartLineCap="Round"/>-->
-                <Button Focusable="false" Name="ParseChapters" Content="Parse and save fb2" Grid.Row="3"/>
-                <Grid Grid.Row="5">
+                <Grid Grid.Row="1">
                     <ProgressBar Name="ProgressOfParsing" HorizontalAlignment="Stretch" Height="26" Margin="0 0 0 0"/>
                     <TextBlock Name="ProgressOfParsingText" TextAlignment="Center" VerticalAlignment="Center">
                         <TextBlock.Text>
