@@ -13,6 +13,10 @@ File Novels.xml is additional. If file in directory with main exe then all novel
 		<Url>http://wolftales.ru/stellar-transformations</Url>
 		<AuthorFName>IET</AuthorFName>
 		<AuthorLName>I Eat Tomatoes</AuthorLName>
-		<CoverImgB64>*jpeg cover encoded by base64*</CoverImgB64>
+		<CoverPath>CoversJpg\st.jpg</CoverPath><!--NOT necessary-->
+		<CoverUrl>http://images.17173.com/2013/news/2013/12/12/zc1212xc01s.jpg</CoverUrl><!--NOT necessary-->
+		<CoverImgB64>*jpeg cover encoded by base64*</CoverImgB64><!--NOT necessary-->
       </Novel>
+	  ........
     </ArrayOfNovel>
+if CoverPath is null or not exists then programm will download cover by CoverUrl. If downloading return expection then programm will use CoverImgB64. If CoverImgB64 is null then program will skip cover.

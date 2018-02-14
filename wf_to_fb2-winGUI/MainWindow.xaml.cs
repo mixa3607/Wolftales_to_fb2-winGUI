@@ -9,6 +9,7 @@ using System.Xml.Linq;
 using System.IO;
 using System.Windows.Media.Animation;
 using System.Xml.Serialization;
+using System.Net;
 
 namespace wf_to_fb2
 {
@@ -22,6 +23,8 @@ namespace wf_to_fb2
         public string Url { get; set; }
         public string AuthorFName { get; set; }
         public string AuthorLName { get; set; }
+        public string CoverPath { get; set; }
+        public string CoverUrl { get; set; }
         public string CoverImgB64 { get; set; }
     }
     public partial class MainWindow : MetroWindow
@@ -57,6 +60,8 @@ namespace wf_to_fb2
                         Url = "http://wolftales.ru/stellar-transformations",
                         AuthorFName = "IET",
                         AuthorLName = "I Eat Tomatoes",
+                        CoverPath = @"CoversJpg\st.jpg",
+                        CoverUrl = "http://images.17173.com/2013/news/2013/12/12/zc1212xc01s.jpg",
                         CoverImgB64 = null
                     },
                     new Novel
@@ -65,6 +70,8 @@ namespace wf_to_fb2
                         Url = "http://wolftales.ru/usaw",
                         AuthorFName = "ESC",
                         AuthorLName = "Endless Sea of Clouds",
+                        CoverPath = @"CoversJpg\usaw.jpg",
+                        CoverUrl = "http://wolftales.ru/wp-content/uploads/2016/05/usawcover700.jpg",
                         CoverImgB64 = null
                     },
                     new Novel
@@ -73,6 +80,8 @@ namespace wf_to_fb2
                         Url = "http://wolftales.ru/gam3",
                         AuthorFName = "Cosimo",
                         AuthorLName = "Yap",
+                        CoverPath = @"CoversJpg\game.jpg",
+                        CoverUrl = "https://images-na.ssl-images-amazon.com/images/I/51Z5H26C26L.jpg",
                         CoverImgB64 = null
                     },
                     new Novel
@@ -81,6 +90,8 @@ namespace wf_to_fb2
                         Url = "http://wolftales.ru/ldm",
                         AuthorFName = "Onikage",
                         AuthorLName = "Spanner",
+                        CoverPath = @"CoversJpg\ldm.jpg",
+                        CoverUrl = "http://i.imgur.com/wNF9pht.jpg",
                         CoverImgB64 = null
                     }
                 };
@@ -175,6 +186,8 @@ namespace wf_to_fb2
             var bw = sender as BackgroundWorker;
             int progress = 0;
 
+            string CoverPath = null;
+            string CoverUrl = null;
             string CoverImgB64 = null;
             string FName = "translated by";
             string LName = "Wolftales";
@@ -182,14 +195,33 @@ namespace wf_to_fb2
             bw.ReportProgress(progress);
             if (Method == 1)
             {
-                
                 Dispatcher.Invoke(delegate () {
-                    CoverImgB64 = ((Novel)ListNovels.SelectedItem).CoverImgB64;
                     FName = ((Novel)ListNovels.SelectedItem).AuthorFName;
                     LName = ((Novel)ListNovels.SelectedItem).AuthorLName;
+                    CoverPath = ((Novel)ListNovels.SelectedItem).CoverPath;
+                    CoverUrl = ((Novel)ListNovels.SelectedItem).CoverUrl;
+                    CoverImgB64 = ((Novel)ListNovels.SelectedItem).CoverImgB64;
                 });
             }
-            
+            if (File.Exists(CoverPath))
+            {
+                CoverImgB64 = Convert.ToBase64String(File.ReadAllBytes(CoverPath));
+            }
+            else
+            {
+                try
+                {
+                    using (var client = new WebClient())
+                    {
+                        CoverImgB64 = Convert.ToBase64String(client.DownloadData(CoverUrl));
+                    }
+                }
+                catch
+                {
+                    
+                }
+            }
+
             string BookName = Parser.Get_BookName(Parser.Get_Page(index));
             
             DateTime time = DateTime.Now;
