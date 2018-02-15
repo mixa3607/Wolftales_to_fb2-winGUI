@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using MahApps.Metro.Controls;
 using System.Xml.Linq;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Media.Animation;
 using System.Xml.Serialization;
 using System.Net;
@@ -43,15 +44,16 @@ namespace wf_to_fb2
 
 
             //init novels
-            if (File.Exists("Novels.xml"))
+            try
             {
                 XmlSerializer serializer = new XmlSerializer(typeof(Novel[]));
                 Stream reader = new FileStream("Novels.xml", FileMode.Open);
                 Novels = (Novel[])serializer.Deserialize(reader);
                 reader.Close();
             }
-            else
+            catch (Exception)
             {
+                Task.Run(() => MessageBox.Show("Novels.xml not exists or not permissions denied. You can run programm with Admin mode.", "Permissions denied/Not exists", MessageBoxButton.OK, MessageBoxImage.Warning));
                 Novels = new Novel[]
                 {
                     new Novel
